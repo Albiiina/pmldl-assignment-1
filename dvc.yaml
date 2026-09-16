@@ -1,0 +1,29 @@
+stages:
+  preprocess:
+    cmd: python code/datasets/preprocess.py
+    deps:
+      - code/datasets/preprocess.py
+      - data/raw/train.csv
+    outs:
+      - data/processed/train.csv
+      - data/processed/test.csv
+  train:
+    cmd: python code/models/train.py
+    deps:
+      - code/models/train.py
+      - data/processed/train.csv
+      - data/processed/test.csv
+    outs:
+      - models/model.joblib
+    metrics:
+      - metrics/metrics.json
+  deploy:
+    cmd: docker compose -f code/deployment/docker-compose.yml up -d --build
+    deps:
+      - models/model.joblib
+      - requirements.txt
+      - code/deployment/api/main.py
+      - code/deployment/api/Dockerfile
+      - code/deployment/app/app.py
+      - code/deployment/app/Dockerfile
+      - code/deployment/docker-compose.yml

@@ -1,0 +1,77 @@
+schema: '2.0'
+stages:
+  preprocess:
+    cmd: python code/datasets/preprocess.py
+    deps:
+    - path: code/datasets/preprocess.py
+      hash: md5
+      md5: 5ceaab3b4f40d74e7340ac0c9a346e4f
+      size: 2031
+    - path: data/raw/train.csv
+      hash: md5
+      md5: 2309cc5f04782ed9bb6016d9f4e381cf
+      size: 61194
+    outs:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: fd6d2b0763aebf194ab06375affd8608
+      size: 5023
+    - path: data/processed/train.csv
+      hash: md5
+      md5: e04d6fa95665ee459a2df258a52ad9e3
+      size: 19920
+  train:
+    cmd: python code/models/train.py
+    deps:
+    - path: code/models/train.py
+      hash: md5
+      md5: 8d8717c24f131b5449ccc035b2ec074c
+      size: 2905
+    - path: data/processed/test.csv
+      hash: md5
+      md5: fd6d2b0763aebf194ab06375affd8608
+      size: 5023
+    - path: data/processed/train.csv
+      hash: md5
+      md5: e04d6fa95665ee459a2df258a52ad9e3
+      size: 19920
+    outs:
+    - path: metrics/metrics.json
+      hash: md5
+      md5: 5c1af39c8a76385686c1e572389c3bb0
+      size: 150
+    - path: models/model.joblib
+      hash: md5
+      md5: e76c62222cb68d81649f51cee876d1c3
+      size: 3601
+  deploy:
+    cmd: docker compose -f code/deployment/docker-compose.yml up -d --build
+    deps:
+    - path: code/deployment/api/Dockerfile
+      hash: md5
+      md5: 152b2b4a9310e3c323917394e2589ad9
+      size: 290
+    - path: code/deployment/api/main.py
+      hash: md5
+      md5: eb95183c591dcff1551ede9ad6e8e667
+      size: 2135
+    - path: code/deployment/app/Dockerfile
+      hash: md5
+      md5: abc0da0aed48304d78618dd1101940a4
+      size: 256
+    - path: code/deployment/app/app.py
+      hash: md5
+      md5: a2f0aab29784817a12a709acf7b6dc7c
+      size: 1831
+    - path: code/deployment/docker-compose.yml
+      hash: md5
+      md5: 369eb38f3f99f2300d285fe36c27d3fa
+      size: 466
+    - path: models/model.joblib
+      hash: md5
+      md5: e76c62222cb68d81649f51cee876d1c3
+      size: 3601
+    - path: requirements.txt
+      hash: md5
+      md5: 3503f2771690be0b6c64863aaf61e960
+      size: 6196
